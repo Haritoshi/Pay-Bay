@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Добро пожаловать в Pay-Bay! Игровой маркетплейс</h1>
+<p>Здесь можно покупать и продавать аккаунты, скины и услуги в играх.</p>
+
+<div class="row">
+    {% for listing in listings %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            {% if listing.image %}
+            <img src="{{ url_for('static', filename='uploads/' + listing.image) }}" class="card-img-top" alt="{{ listing.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ listing.title }}</h5>
+                <p class="card-text">{{ listing.description[:100] }}...</p>
+                <p class="text-muted">Игра: {{ listing.game }} | Цена: {{ listing.price }} ₽</p>
+                {% if current_user.is_authenticated and listing.seller_id != current_user.id %}
+                <form method="POST" action="{{ url_for('buy', listing_id=listing.id) }}">
+                    <button type="submit" class="btn btn-success">Купить</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p>Нет объявлений. Добавьте первое!</p>
+    {% endfor %}
+</div>
+{% endblock %}
